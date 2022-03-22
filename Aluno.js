@@ -1,7 +1,16 @@
 import ModelError from "/ModelError.js";
 
 export default class Aluno {
-  
+    
+  //
+  // ATRIBUTOS PRIVADOS
+  //
+  #matricula;
+  #cpf;
+  #nome;
+  #email;
+  #telefone;
+
   //-----------------------------------------------------------------------------------------//
 
   constructor(matr, cpf, nome, email, telefone) {

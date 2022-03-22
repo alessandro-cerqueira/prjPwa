@@ -30,6 +30,7 @@ var aluno2 = new Aluno('67890', '555.555.555-55', 'Maria de Souza','maria@eu.com
 ctrl.dao.incluir(aluno1);
 ctrl.dao.incluir(aluno2);
 
+
 ctrl.dao.obterAlunos().then( async (value) => await alert(JSON.stringify(value)) ) ;
 
 aluno2.setNome('Maria de Souza RAMOS');
@@ -38,8 +39,9 @@ ctrl.dao.alterar(aluno2);
 ctrl.dao.obterAlunos().then( async (value) => await alert(JSON.stringify(value)) ) ;
 
 ctrl.dao.excluir(aluno1);
-ctrl.dao.excluir(aluno2);
+//ctrl.dao.excluir(aluno2);
 
+alert("Atenção 3");
 ctrl.dao.obterAlunos().then( async (value) => await alert(JSON.stringify(value)) ) ;
 
 
