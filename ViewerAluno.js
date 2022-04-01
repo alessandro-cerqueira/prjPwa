@@ -1,3 +1,4 @@
+import Status from "/Status.js";
 import Aluno from "/Aluno.js";
 import ViewerError from "/ViewerError.js";
 
@@ -5,10 +6,15 @@ import ViewerError from "/ViewerError.js";
 
 export default class ViewerAluno {
 
+  #qtde;
+  #ctrl;
+  
   constructor(ctrl) {
-    this.ctrl = ctrl;
+    this.#ctrl = ctrl;
+    this.#qtde = 0;
     this.divNavegar  = this.obterElemento('divNavegar'); 
     this.divComandos = this.obterElemento('divComandos'); 
+    this.divPosicao  = this.obterElemento('divPosicao'); 
     this.divDialogo  = this.obterElemento('divDialogo');
 
     this.btPrimeiro  = this.obterElemento('btPrimeiro');
@@ -30,11 +36,11 @@ export default class ViewerAluno {
     this.tfEmail     = this.obterElemento('tfEmail');
     this.tfTelefone  = this.obterElemento('tfTelefone');
       
-    this.btIncluir.onclick = editando; 
-    this.btAlterar.onclick = editando; 
+    this.btIncluir.onclick = fnBtIncluir; 
+    this.btAlterar.onclick = fnBtIncluir; 
 
-    this.btOk.onclick       = apresentando; 
-    this.btCancelar.onclick = apresentando; 
+    this.btOk.onclick = fnBtOk; 
+    this.btCancelar.onclick = fnBtCancelar; 
   }
 
 //------------------------------------------------------------------------//
@@ -43,30 +49,59 @@ export default class ViewerAluno {
     let elemento = document.getElementById(idElemento);
     if(elemento == null) 
       throw new ViewerError("Não encontrei um elemento com id '" + idElemento + "'");
-    // Adicionando o atributo 'DONO' no elemento do Viewer. Isso permitirá
+    // Adicionando o atributo 'viewer' no elemento do Viewer. Isso permitirá
     // que o elemento guarde a referência para o objeto Viewer que o contém.
-    elemento.DONO = this;
+    elemento.viewer = this;
     return elemento;
   }
 
+//------------------------------------------------------------------------//
   
-  apresentando() { 
-    alert(this);
-    this.DONO.tfCpf.disabled = true;
-    this.DONO.divNavegar.hidden = false;
-    this.DONO.divComandos.hidden = false;
-    this.DONO.divDialogo.hidden = true; 
-    this.DONO.tfMatricula.disabled = true;
-    this.DONO.tfCpf.disabled = true;
-    this.DONO.tfNome.disabled = true;
-    this.DONO.tfEmail.disabled = true;
-    this.DONO.tfTelefone.disabled = true;
+  getCtrl() { 
+    return this.#ctrl;
   }
 
-  //------------------------------------------------------------------------//
+//------------------------------------------------------------------------//
+  
+  setQtde(qtde) { 
+    this.#qtde = qtde;
+  }
 
-  navegar() {
-    apresentando();
+//------------------------------------------------------------------------//
+  
+  apresentar(aluno) { 
+    this.tfMatricula.value = aluno.getMatricula();
+    this.tfCpf.value       = aluno.getCpf();
+    this.tfNome.value      = aluno.getNome();
+    this.tfEmail.value     = aluno.getEmail();
+    this.tfTelefone.value  = aluno.getTelefone();
+  }
+
+//------------------------------------------------------------------------//
+  
+  editando(operacao) { 
+    this.divNavegar.hidden = true;
+    this.divComandos.hidden = true;
+    this.divDialogo.hidden = false; 
+    this.tfMatricula.disabled = false;
+    this.tfCpf.disabled = false;
+    this.tfNome.disabled = false;
+    this.tfEmail.disabled = false;
+    this.tfTelefone.disabled = false;    
+  }
+
+//------------------------------------------------------------------------//
+  
+  apresentando() { 
+    this.tfCpf.disabled = true;
+    this.divNavegar.hidden = false;
+    this.divComandos.hidden = false;
+    this.divDialogo.hidden = true; 
+    this.tfMatricula.disabled = true;
+    this.tfCpf.disabled = true;
+    this.tfNome.disabled = true;
+    this.tfEmail.disabled = true;
+    this.tfTelefone.disabled = true;
   }
 
 }
@@ -75,31 +110,36 @@ export default class ViewerAluno {
 // CALLBACKs para os Botões
 //------------------------------------------------------------------------//
 
-function editando() { 
-  // o 'this' desta função é o botão. Para recuperarmos o Viewer,
-  // estamos usando o atributo DONO, colocado no método obterElemento
-  this.DONO.divNavegar.hidden = true;
-  this.DONO.divComandos.hidden = true;
-  this.DONO.divDialogo.hidden = false; 
-  this.DONO.tfMatricula.disabled = false;
-  this.DONO.tfCpf.disabled = false;
-  this.DONO.tfNome.disabled = false;
-  this.DONO.tfEmail.disabled = false;
-  this.DONO.tfTelefone.disabled = false;
+function fnBtIncluir() {
+  // Aqui, o 'this' é o objeto Button. Eu adicionei o atributo 'viewer'
+  // no botão para poder executar a instrução abaixo.
+  this.viewer.getCtrl().iniciarIncluir();
+  
 }
 
 //------------------------------------------------------------------------//
 
-function apresentando() { 
-  this.DONO.tfCpf.disabled = true;
-  this.DONO.divNavegar.hidden = false;
-  this.DONO.divComandos.hidden = false;
-  this.DONO.divDialogo.hidden = true; 
-  this.DONO.tfMatricula.disabled = true;
-  this.DONO.tfCpf.disabled = true;
-  this.DONO.tfNome.disabled = true;
-  this.DONO.tfEmail.disabled = true;
-  this.DONO.tfTelefone.disabled = true;
+function fnBtOk() {
+  if(this.viewer.getCtrl().status == Status.INCLUINDO) {
+    const matricula = this.viewer.tfMatricula.value;
+    const cpf = this.viewer.tfCpf.value;
+    const nome = this.viewer.tfNome.value;
+    const email = this.viewer.tfEmail.value;
+    const telefone = this.viewer.tfTelefone.value;
+    this.viewer.getCtrl().incluir(matricula, cpf, nome, email, telefone); 
+  }
+  
 }
 
 //------------------------------------------------------------------------//
+
+function fnBtCancelar() {
+  this.viewer.getCtrl().cancelar(); 
+}
+
+//------------------------------------------------------------------------//
+
+
+
+
+

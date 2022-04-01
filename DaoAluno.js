@@ -1,6 +1,7 @@
 "use strict";
 
 import ModelError from "/ModelError.js";
+import Aluno from "/Aluno.js";
 
 var cont = 1;
 
@@ -26,7 +27,7 @@ export default class DaoAluno {
 
       let requestDB = window.indexedDB.open("AlunoDB", 1); 
 
-      requestDB.onupgradeneeded = event => {
+      requestDB.onupgradeneeded = (event) => {
         let db = event.target.result;
         let store = db.createObjectStore("AlunoST", {
           autoIncrement: true
@@ -61,13 +62,14 @@ export default class DaoAluno {
           store = transacao.objectStore("AlunoST");
         } 
         catch (e) {
-          resolve(new ModelError("Erro: " + e));
+          reject(new ModelError("Erro: " + e));
         }
         let array = [];
         store.openCursor().onsuccess = (event) => {
           var cursor = event.target.result;
-          if (cursor) {
-            array.push(cursor.value);
+          if (cursor) {        
+            const novo = Aluno.assign(cursor.value);
+            array.push(novo);
             cursor.continue();
           } else {
             resolve(array);
