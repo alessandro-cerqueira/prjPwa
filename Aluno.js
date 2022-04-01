@@ -14,7 +14,6 @@ export default class Aluno {
   //-----------------------------------------------------------------------------------------//
 
   constructor(matr, cpf, nome, email, telefone) {
-      
     this.setMatricula(matr);
     this.setCpf(cpf);
     this.setNome(nome);
@@ -24,10 +23,28 @@ export default class Aluno {
   
   //-----------------------------------------------------------------------------------------//
 
+  static assign(obj) {
+    return new Aluno(obj.matricula, obj.cpf, obj.nome, obj.email, obj.telefone);
+  }
+
+  //-----------------------------------------------------------------------------------------//
+
+  getMatricula() {
+    return this.#matricula;
+  }
+  
+  //-----------------------------------------------------------------------------------------//
+
   setMatricula(matr) {
     if(!Aluno.validarMatricula(matr))
       throw new ModelError("Matrícula Inválida: " + matr);
-    this.matricula = matr;
+    this.#matricula = matr;
+  }
+  
+  //-----------------------------------------------------------------------------------------//
+
+  getCpf() {
+    return this.#cpf;
   }
   
   //-----------------------------------------------------------------------------------------//
@@ -35,7 +52,13 @@ export default class Aluno {
   setCpf(cpf) {
     if(!Aluno.validarCpf(cpf))
       throw new ModelError("CPF Inválido: " + cpf);
-    this.cpf = cpf;
+    this.#cpf = cpf;
+  }
+  
+  //-----------------------------------------------------------------------------------------//
+
+  getNome() {
+    return this.#nome;
   }
   
   //-----------------------------------------------------------------------------------------//
@@ -43,7 +66,13 @@ export default class Aluno {
   setNome(nome) {
     if(!Aluno.validarNome(nome))
       throw new ModelError("Nome Inválido: " + nome);
-    this.nome = nome;
+    this.#nome = nome;
+  }
+  
+  //-----------------------------------------------------------------------------------------//
+
+  getEmail() {
+    return this.#email;
   }
   
   //-----------------------------------------------------------------------------------------//
@@ -51,7 +80,13 @@ export default class Aluno {
   setEmail(email) {
     if(!Aluno.validarEmail(email))
       throw new ModelError("Email inválido: " + email);
-    this.email = email;
+    this.#email = email;
+  }
+  
+  //-----------------------------------------------------------------------------------------//
+
+  getTelefone() {
+    return this.#telefone;
   }
   
   //-----------------------------------------------------------------------------------------//
@@ -59,7 +94,19 @@ export default class Aluno {
   setTelefone(telefone) {
     if(!Aluno.validarTelefone(telefone))
       throw new ModelError("Telefone inválido: " + telefone);
-    this.telefone = telefone;
+    this.#telefone = telefone;
+  }
+  
+  //-----------------------------------------------------------------------------------------//
+
+  toJSON() {
+    return '{' +
+               '"matricula" : "'+ this.#matricula + '",' +
+               '"cpf" :  "'     + this.#cpf       + '", ' +
+               '"nome" : "'     + this.#nome      + '", ' +
+               '"email" : "'    + this.#email     + '", ' +
+               '"telefone" : "' + this.#telefone  + '", ' + 
+           '}';  
   }
   
   //-----------------------------------------------------------------------------------------//
@@ -142,7 +189,7 @@ export default class Aluno {
   }
 
   //-----------------------------------------------------------------------------------------//
-  
+   
   mostrar() {
     let texto = "Matrícula: " + this.matricula + "\n";
     texto += "Nome: " + this.nome + "\n";
